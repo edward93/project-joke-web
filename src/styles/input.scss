@@ -1,0 +1,68 @@
+@import "./colors.scss";
+@import "./common.scss";
+
+// gradient animation
+@keyframes gradient {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+@mixin animated-input {
+  display: flex;
+  position: relative;
+
+  & input.pjw-input {
+    display: flex;
+    border-style: none;
+    outline: none;
+    margin: 0 auto;
+    font-size: 1.2rem;
+
+    // background-color: lighten($color: theme($bg-color, $primary-color), $amount: 10%);
+    background-color: rgba(#3d435791, 0.6);
+
+    border-radius: 2px;
+    padding: 1.2rem 1.8rem 1.2rem;
+
+    flex-grow: 1;
+    color: inherit;
+    line-height: 2.2rem;
+    vertical-align: middle;
+
+    &::-webkit-input-placeholder,
+    &::placeholder {
+      // color: rgba(theme($text-color, $secondary-color), 0.5);
+      color: #7881a1;
+    }
+
+    // &:autofill,
+    // &:-webkit-autofill,
+    // &:-webkit-autofill:hover,
+    // &:-webkit-autofill:focus {
+    //   -webkit-text-fill-color: inherit;
+    //   -webkit-box-shadow: 0 0 0px 1000px #000 inset;
+    //   // -webkit-text-fill-color: inherit !important;
+    //   // -webkit-box-shadow: inherit !important;
+    // }
+  }
+
+  & .pjw-input-bar {
+    content: "";
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    z-index: 999;
+    height: 2px;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    background-position: 0% 0%;
+    background: linear-gradient(to right, #b294ff, #57e6e6, #feffb8, #57e6e6, #b294ff, #57e6e6);
+    background-size: 500% auto;
+    animation: gradient 3s linear infinite;
+  }
+}

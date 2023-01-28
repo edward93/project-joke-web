@@ -1,0 +1,19 @@
+@import "./colors.scss";
+@import "./common.scss";
+
+.footer-container {
+  display: flex;
+  justify-content: flex-end;
+
+  padding: 0.3em 1em 1em 1em;
+
+  background-color: theme($bg-color, $primary-color);
+  color: theme($text-color, $secondary-color);
+
+  // @include shadow(rgba(0, 0, 0, 0.2), "top");
+
+  & .footer-app-info {
+    display: flex;
+    flex-direction: column;
+  }
+}

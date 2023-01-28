@@ -1,0 +1,88 @@
+@import "./colors.scss";
+@import "./common.scss";
+@import "./input.scss";
+
+.pjw-game-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+
+  width: 100%;
+
+  & .pjw-game-status-bar {
+    display: flex;
+    justify-content: center;
+
+    padding: 0.3rem 1.2rem 0.5rem 1.2rem;
+    background-color: theme($bg-color, $primary-color, "dark");
+  }
+
+  & .pjw-game-main-area {
+    display: flex;
+    flex-grow: 1;
+
+    padding: 1rem 1.2rem;
+
+    & .pjw-game-left-sidebar {
+      display: flex;
+      flex: 2 2 0;
+    }
+
+    & .pjw-game-mid-area {
+      display: flex;
+      flex: 10 10 0;
+
+      // justify-content: center;
+      align-items: center;
+
+      & .pjw-game-user-creation {
+        display: flex;
+        // flex: 1 1 auto;
+
+        // justify-content: space-around;
+
+        & .pjw-game-username {
+          @include animated-input;
+
+          margin: 0 1rem;
+        }
+
+        & button.pjw-create-username-btn {
+          background: none;
+          padding: 0.5rem 1rem;
+          cursor: pointer;
+          text-transform: uppercase;
+          letter-spacing: 0.1rem;
+          font-weight: 800;
+          font-size: 1.2rem;
+
+          color: theme($text-color, $secondary-color);
+
+          border: 0.2rem solid theme($text-color, $secondary-color);
+          transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+
+          &:hover:enabled {
+            background-color: theme($text-color, $secondary-color);
+            color: theme($bg-color, $primary-color);
+          }
+
+          &:focus:enabled {
+            outline: none;
+          }
+
+          &:active:enabled {
+            border: 0.2rem solid theme($text-color, $primary-color);
+            background-color: theme($text-color, $primary-color);
+          }
+
+          &:disabled {
+            background-color: theme($text-color, $secondary-color);
+            color: theme($bg-color, $primary-color);
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+  }
+}
