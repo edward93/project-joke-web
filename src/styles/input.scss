@@ -14,23 +14,26 @@
 @mixin animated-input {
   display: flex;
   position: relative;
+  // flex: 1 0 0;
 
   & input.pjw-input {
     display: flex;
+    min-width: 0;
     border-style: none;
     outline: none;
-    margin: 0 auto;
-    font-size: 1.2rem;
+    // margin: 0 auto;
+    font-size: 1rem;
 
     // background-color: lighten($color: theme($bg-color, $primary-color), $amount: 10%);
     background-color: rgba(#3d435791, 0.6);
 
     border-radius: 2px;
-    padding: 1.2rem 1.8rem 1.2rem;
+    padding: 1rem 1.1rem 1rem;
 
+    // flex: 1 0 0;
     flex-grow: 1;
     color: inherit;
-    line-height: 2.2rem;
+    // line-height: 2.2rem;
     vertical-align: middle;
 
     &::-webkit-input-placeholder,
@@ -56,7 +59,7 @@
     left: 0px;
     right: 0px;
     bottom: 0px;
-    z-index: 999;
+    z-index: 2;
     height: 2px;
     border-bottom-left-radius: 2px;
     border-bottom-right-radius: 2px;

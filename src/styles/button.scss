@@ -1,0 +1,45 @@
+@import "./colors.scss";
+@import "./common.scss";
+
+@mixin ghost-btn {
+  background: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  font-weight: 800;
+  font-size: .7rem;
+
+  color: theme($text-color, $secondary-color);
+
+  border: 0.2rem solid theme($text-color, $secondary-color);
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+
+  &:hover:enabled {
+    background-color: theme($text-color, $secondary-color);
+    color: theme($bg-color, $primary-color);
+  }
+
+  &:focus:enabled {
+    outline: none;
+  }
+
+  &:active:enabled {
+    border: 0.2rem solid theme($text-color, $primary-color);
+    background-color: theme($text-color, $primary-color);
+  }
+
+  &:disabled {
+    // background-color: rgba(theme($text-color, $secondary-color), 0.5);
+    // background-color: theme($text-color, $secondary-color);
+    // color: theme($bg-color, $primary-color);
+    opacity: 0.2;
+    cursor: not-allowed;
+  }
+}
+
+button.ghost-btn {
+  @include ghost-btn();
+  // display: flex;
+  // flex: 1 0 0;
+}

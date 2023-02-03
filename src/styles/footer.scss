@@ -2,6 +2,7 @@
 @import "./common.scss";
 
 .footer-container {
+  font-size: 0.8rem;
   display: flex;
   justify-content: flex-end;
 
@@ -10,7 +11,7 @@
   background-color: theme($bg-color, $primary-color);
   color: theme($text-color, $secondary-color);
 
-  // @include shadow(rgba(0, 0, 0, 0.2), "top");
+  @include shadow(rgba(0, 0, 0, 0.2), "top");
 
   & .footer-app-info {
     display: flex;
