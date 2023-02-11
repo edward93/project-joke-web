@@ -1,49 +1,20 @@
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
 
+import { Types } from "../services/gameService";
+import Session = Types.Session;
+import SessionState = Types.SessionState;
+
 import "../styles/game.scss";
+//TODO: add redux
 
 const socket = io(`${process.env.REACT_APP_SOCKET_URL}`);
-
-// type GameState = "UsernameCreated" | "Created" | "Active" | "Suspended" | "Finished";
-enum SessionState {
-  INITIATED = "INITIATED",
-  CONNECTED = "CONNECTED",
-  USERNAME_CREATED = "USERNAME_CREATED",
-  // USERNAME_CHANGED = "USERNAME_CHANGED",
-  JOINED_GAME = "JOINED_GAME",
-  LEFT_GAME = "LEFT_GAME",
-}
-
-// type Game = {
-//   currentUser: {};
-//   gameId?: string;
-//   gameState: GameState;
-//   creator: string;
-//   members?: string[];
-// };
-/**
- * 
- */
-type GameQuestion = {
-  id: number;
-  question: string;
-  answer?: string;
-  answeredBy?: string;
-}
-
-type Game = {
-  userId: string;
-  questions: GameQuestion[];
-}
-
-
 
 const GameComponent = () => {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [username, setUsername] = useState<string>("");
   const [gameId, setGameId] = useState<string>("");
-  const [session, setSession] = useState<{ [key: string]: any }>({ State: SessionState.INITIATED });
+  const [session, setSession] = useState<Session>({ state: SessionState.INITIATED });
 
   useEffect(() => {
     socket.on("connect", () => {
@@ -55,16 +26,16 @@ const GameComponent = () => {
     });
 
     // new user joined
-    socket.on("new user", (username: string) => {
-      console.log(`New user has joined: '${username}'`);
+    socket.on("new user", (user: Types.User) => {
+      console.log(`New user has joined: '${user.username}'`);
     });
 
     // user created a new game
-    socket.on("game created", (game: any) => {
+    socket.on("game created", (game: Types.Game) => {
       setGameId(game.id);
 
       // update the main session with the current game id
-      setSession((prevSession) => ({ ...prevSession, currentGame: game, State: SessionState.JOINED_GAME }));
+      setSession((prevSession) => ({ ...prevSession, currentGame: game, state: SessionState.JOINED_GAME }));
     });
 
     // new user joined
@@ -72,9 +43,27 @@ const GameComponent = () => {
       // log
       console.log(`New user: ${data.userId} has joined this game: `, data.game);
 
-      // update the current session
-      setSession((prevSession) => ({ ...prevSession, currentGame: data.game, State: SessionState.JOINED_GAME }));
+      // update the current game obj and session state
+      setSession((prevSession) => ({ ...prevSession, currentGame: data.game, state: SessionState.JOINED_GAME }));
     });
+
+    // player is ready
+    socket.on("player ready", (game: Types.Game) => {
+      // log
+      console.log(`Player is ready`, game);
+
+      // update the current game obj
+      setSession((prevSession) => ({ ...prevSession, currentGame: game }));
+    });
+
+    // game started
+    socket.on("game started", (game: Types.Game) => {
+      // log
+      console.log(`Game has started`);
+
+      // update the current game obj
+      setSession((prevSession) => ({ ...prevSession, currentGame: game }));
+    })
 
     return () => {
       socket.off("connect");
@@ -82,9 +71,14 @@ const GameComponent = () => {
       socket.off("new user");
       socket.off("game created");
       socket.off("joined game");
+      socket.off("player ready");
     };
   }, []);
 
+  /**
+   * Handles username input changes
+   * @param event input event
+   */
   const onUsernameChange = (event: any) => {
     const value = event.target.value;
 
@@ -100,7 +94,7 @@ const GameComponent = () => {
     socket.emit("new user", username);
 
     // add user to the session obj
-    setSession({ ...session, CurrentUser: { id: socket.id, username }, State: SessionState.USERNAME_CREATED });
+    setSession({ ...session, currentUser: { id: socket.id, username }, state: SessionState.USERNAME_CREATED });
   };
 
   /**
@@ -131,6 +125,24 @@ const GameComponent = () => {
     setGameId(value);
   };
 
+  /**
+   * Handles ready player btn click
+   * @param event click event
+   */
+  const onReadyPlayerClick = (event: any) => {
+    // emit ready player event
+    socket.emit("ready player", { gameId: session.currentGame?.id, userId: session.currentUser?.id });
+  };
+
+  /**
+   * Handles start game btn click
+   * @param event click event
+   */
+  const onStartGameClick = (event: any) => {
+    // emit start game event
+    socket.emit("start game", session.currentGame?.id, session.currentUser?.id);
+  };
+
   return (
     <div className="pjw-game-container">
       <section className="pjw-game-status-bar">
@@ -141,15 +153,17 @@ const GameComponent = () => {
           {/* <div className="close">
             <button>Close</button>
           </div> */}
-          {(session.State === SessionState.USERNAME_CREATED || session.State === SessionState.JOINED_GAME) && (
+          {(session.state === SessionState.USERNAME_CREATED || session.state === SessionState.JOINED_GAME) && (
             <div className="pjw-game-players">
-              <div className="pjw-game-current-player">Me: {session?.CurrentUser?.username}</div>
-              <div className="pjw-game-other-players">Players ({session?.currentGame?.playersIds?.length ?? 0})</div>
+              <div className="pjw-game-current-player">Me: {session?.currentUser?.username}</div>
+              <div className="pjw-game-other-players">
+                Players ({Object.keys(session?.currentGame?.players ?? {}).length})
+              </div>
             </div>
           )}
         </section>
         <section className="pjw-game-mid-area">
-          {session.State === SessionState.INITIATED && (
+          {session.state === SessionState.INITIATED && (
             <div className="pjw-game-user-creation">
               <div className="pjw-game-username">
                 <input
@@ -171,7 +185,7 @@ const GameComponent = () => {
               </button>
             </div>
           )}
-          {session.State === SessionState.USERNAME_CREATED && (
+          {session.state === SessionState.USERNAME_CREATED && (
             <div className="pjw-game-create-or-join-game">
               <div className="pjw-game-join-game">
                 <div className="pjw-game-id">
@@ -196,7 +210,37 @@ const GameComponent = () => {
               </div>
             </div>
           )}
-          {session.State === SessionState.JOINED_GAME && <div className="pjw-game-level-container"></div>}
+          {session.state === SessionState.JOINED_GAME && (
+            <div className="pjw-game-level-container">
+              {session.currentGame?.state === Types.GameState.WAITING && (
+                <div className="pjw-game-waiting-state-setup">
+                  <div className="pwj-game-waiting-state-text">
+                    <p>Waiting for other players...</p>
+                  </div>
+                  {session.currentUser && !session.currentGame?.players?.[session.currentUser.id]?.ready && (
+                    <div className="pjw-game-ready-player">
+                      <button className="pjw-game-ready-player-btn ghost-btn" onClick={onReadyPlayerClick}>
+                        Ready
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+              {session.currentGame?.state === Types.GameState.READY && (
+                <>
+                  <div className="pjw-game-ready-state-setup">Game is ready</div>
+
+                  {session.currentUser?.id === session.currentGame?.host && (
+                    <div className="pjw-game-start-game">
+                      <button className="pjw-game-start-game ghost-btn" onClick={onStartGameClick}>
+                        Start
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
         </section>
       </section>
     </div>

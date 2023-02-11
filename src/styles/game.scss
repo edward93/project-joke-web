@@ -23,6 +23,11 @@
   & .pjw-game-main-area {
     display: flex;
     flex-grow: 1;
+    // display: grid;
+    // grid-template-columns: 1fr 8fr 1fr;
+    // grid-template-rows: 1fr;
+    // align-items: center;
+    // align-content: stretch;
     // flex-wrap: wrap;
 
     // @media (max-width: 600px) {
@@ -33,7 +38,7 @@
 
     & .pjw-game-left-sidebar {
       display: flex;
-      flex: 2 2 0;
+      flex: 2 2 auto;
 
       // @media (max-width: 600px) {
       //   // visibility: hidden;
@@ -75,8 +80,9 @@
 
     & .pjw-game-mid-area {
       display: flex;
-      // flex: 10 10 auto;
-      flex-grow: 10;
+      flex: 10 10 auto;
+      // width: 100%;
+      // flex-grow: 10;
 
       flex-wrap: wrap;
 
@@ -130,6 +136,20 @@
         display: flex;
 
         flex: 1;
+
+        & .pjw-game-waiting-state-setup {
+          display: flex;
+          flex: 1;
+
+          justify-content: center;
+        }
+
+        & .pjw-game-ready-state-setup {
+          display: flex;
+          flex: 1;
+
+          justify-content: center;
+        }
       }
     }
   }
