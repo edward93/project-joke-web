@@ -74,11 +74,80 @@ export namespace Types {
   };
 
   /**
+   * Question prompt type
+   */
+  export type PromptType = {
+    /**
+     * Id of the prompt
+     */
+    id: number;
+
+    /**
+     * Actual question of the prompt
+     */
+    question: string;
+
+    /**
+     * Static text used for final story construction
+     */
+    staticText: string;
+  };
+
+  //#region prompt values
+  export const PromptWho: PromptType = {
+    id: 1,
+    question: "Who?",
+    staticText: "",
+  };
+
+  export const PromptWithWhom: PromptType = {
+    id: 2,
+    question: "With whom?",
+    staticText: " with ",
+  };
+
+  export const PromptWhere: PromptType = {
+    id: 3,
+    question: "Where?",
+    staticText: " ",
+  };
+
+  export const PromptWhatWereTheyDoing: PromptType = {
+    id: 4,
+    question: "What were they doing?",
+    staticText: " ",
+  };
+
+  export const PromptWhoSawThem: PromptType = {
+    id: 5,
+    question: "Who saw them?",
+    staticText: " saw them",
+  };
+
+  export const PromptWhatTheySaid: PromptType = {
+    id: 6,
+    question: "What they said?",
+    staticText: " and said - ",
+  };
+  //#endregion
+
+  /**
+   * Prompts
+   */
+  export type Prompt =
+    | typeof PromptWho
+    | typeof PromptWithWhom
+    | typeof PromptWhere
+    | typeof PromptWhatWereTheyDoing
+    | typeof PromptWhoSawThem
+    | typeof PromptWhatTheySaid;
+
+  /**
    * Questions type
    */
-  export type GameQuestion = {
+  export type GamePrompt = {
     id: number;
-    question: string;
+    prompt: Prompt;
     answer?: string;
     answeredBy?: string;
     prevAnsweredBy?: string;
@@ -89,7 +158,7 @@ export namespace Types {
    */
   export type GameSheet = {
     owner: string;
-    questions: GameQuestion[];
+    prompts: GamePrompt[];
   };
 
   /**
@@ -127,7 +196,7 @@ export const createGameSheet = (session: Types.Session, userId: string): [boolea
   // init empty gameSheet
   let gameSheet: Types.GameSheet = {
     owner: userId,
-    questions: [],
+    prompts: [],
   };
 
   // add to the current session's game obj
@@ -161,4 +230,39 @@ export const allPlayersReady = (gameObj: Types.Game): boolean => {
 
   // if everything is fine return true
   return true;
+};
+
+/**
+ * Creates and returns list of prompts
+ * @returns {Types.GamePrompt[]} list of game prompts
+ */
+export const initPrompts = (): Types.GamePrompt[] => {
+  const gamePrompts: Types.GamePrompt[] = [
+    {
+      id: 1,
+      prompt: Types.PromptWho,
+    },
+    {
+      id: 2,
+      prompt: Types.PromptWithWhom,
+    },
+    {
+      id: 3,
+      prompt: Types.PromptWhere,
+    },
+    {
+      id: 4,
+      prompt: Types.PromptWhatWereTheyDoing,
+    },
+    {
+      id: 5,
+      prompt: Types.PromptWhoSawThem,
+    },
+    {
+      id: 6,
+      prompt: Types.PromptWhatTheySaid,
+    },
+  ];
+
+  return gamePrompts;
 };

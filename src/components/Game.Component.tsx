@@ -63,7 +63,7 @@ const GameComponent = () => {
 
       // update the current game obj
       setSession((prevSession) => ({ ...prevSession, currentGame: game }));
-    })
+    });
 
     return () => {
       socket.off("connect");
@@ -238,6 +238,15 @@ const GameComponent = () => {
                     </div>
                   )}
                 </>
+              )}
+              {session.currentGame?.state === Types.GameState.STARTED && (
+                <div className="pjw-game-prompts">
+                  {session.currentGame.gameSheets[session.currentUser?.id ?? ""].prompts.map((prompt) => (
+                    <div key={prompt.id} className="pjw-game-prompt-question">
+                      {prompt.prompt.question}
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           )}
